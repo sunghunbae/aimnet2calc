@@ -1,8 +1,8 @@
 import ase.io
-from aimnet2calc.calculator import AIMNet2Calculator
 import os
 import numpy as np
-
+from collections.abc import Callable
+from aimnet2calc import AIMNet2Calculator
 
 MODELS = ('aimnet2', 'aimnet2_b973c')
 DIR = os.path.dirname(__file__)
@@ -40,14 +40,15 @@ def _stuct_batch():
     return ret
 
 
-def _test_energy(calc, data):
+def _test_energy(calc:Callable, data:dict) -> str:
     _out = calc(data)
     assert 'energy' in _out
     assert len(_out['energy']) == len(data['charge'])
     assert _out['energy'].requires_grad == False
+    return 'success'
 
 
-def _test_forces(calc, data):
+def _test_forces(calc:Callable, data:dict) -> str:
     _out = calc(data, forces=True)
     assert 'energy' in _out
     assert 'forces' in _out
@@ -55,9 +56,9 @@ def _test_forces(calc, data):
     assert _out['energy'].requires_grad == True
     assert len(_out['forces']) == len(data['coord']), _out['forces'].shape
     assert _out['forces'].requires_grad == False
+    return 'success'
 
-
-def _test_forces_stress(calc, data):
+def _test_forces_stress(calc:Callable, data:dict) -> str:
     _out = calc(data, forces=True, stress=True)
     assert 'energy' in _out
     assert 'forces' in _out
@@ -68,9 +69,10 @@ def _test_forces_stress(calc, data):
     assert _out['forces'].requires_grad == False
     assert len(_out['stress']) == 3
     assert _out['stress'].requires_grad == False
+    return 'success'
 
 
-def _test_hessian(calc, data):
+def _test_hessian(calc:Callable, data:dict) -> str:
     _out = calc(data, hessian=True)
     assert 'energy' in _out
     assert 'forces' in _out
@@ -81,7 +83,7 @@ def _test_hessian(calc, data):
     assert _out['forces'].requires_grad == False
     assert len(_out['hessian']) == len(data['coord'])
     assert _out['hessian'].requires_grad == False
-
+    return 'success'
 
 def test_calculator():
     for model in MODELS:

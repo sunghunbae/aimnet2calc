@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aimnet2calc"
+dynamic = ["version"]
+requires-python = ">=3.11"
+dependencies = [
+    "torch>2.0,<3",
+    "torch-cluster",
+    "numpy",
+    "numba",
+    "ase",
+    "requests",
+    "pytest",
+    ]
+authors = [{name = "Sung-Hun Bae", email="sunghun.bae@gmail.com"}, ]
+maintainers = [{name = "Sung-Hun Bae", email="sunghun.bae@gmail.com"}, ]
+description = "AIMNet2 Calculator"
+readme = "README.md"
+license = "MIT"
+keywords = [
+    "AIMNet2",
+    "neural-network-potential",
+    "machine-learning-potential",
+    ]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage        = "https://github.com/sunghunbae/aimnet2calc"
+Repository      = "https://github.com/sunghunbae/aimnet2calc.git"
+Issues          = "https://github.com/sunghunbae/aimnet2calc/issues"
+Changelog       = "https://github.com/sunghunbae/aimnet2calc/blob/master/CHANGELOG.md"
+Documentation   = "https://sunghunbae.github.io/aimnet2calc/"
+
+[project.scripts]
+
+[tool.setuptools.dynamic]
+version = {attr = "aimnet2calc.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"aimnet2calc.assets" = ["*.jpt"]
