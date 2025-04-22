@@ -7,7 +7,7 @@ name = "aimnet2calc"
 dynamic = ["version"]
 requires-python = ">=3.11"
 dependencies = [
-    "torch>2.0,<3",
+    "torch",
     "torch-cluster",
     "numpy",
     "numba",
@@ -48,4 +48,4 @@ version = {attr = "aimnet2calc.__version__"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-"aimnet2calc.assets" = ["*.jpt"]
+"aimnet2calc" = ["models/*.jpt"]

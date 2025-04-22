@@ -29,6 +29,7 @@ dist/
 *.egg
 
 # Tests
+.pytest_cache/
 test-reports/
 .coverage
 

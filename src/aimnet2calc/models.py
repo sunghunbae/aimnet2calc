@@ -2,7 +2,10 @@ import requests
 import sys
 
 from pathlib import Path
+from importlib.resources import files
 
+model_dir = files('aimnet2calc')
+model_dir.mkdir(exist_ok=True)
 model_registry_aliases = {
     'aimnet2'       : 'aimnet2_wb97m_0',
     'aimnet2_wb97m' : 'aimnet2_wb97m_0',
@@ -13,11 +16,8 @@ model_registry_aliases = {
 download_url = "https://github.com/zubatyuk/aimnet-model-zoo/raw/main/aimnet2/"
 
 def get_model_path(name: str) -> str:
-    assets_path = Path(__file__).parent / "assets"
-    assets_path.mkdir(exist_ok=True)
-
     if name in model_registry_aliases:
-        model_path = assets_path / f"{model_registry_aliases[name]}.jpt"
+        model_path = model_dir.joinpath(f"{model_registry_aliases[name]}.jpt")
         if model_path.exists():
             pass
         else:
