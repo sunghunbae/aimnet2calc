@@ -2,11 +2,13 @@ import pytest
 import ase.io
 import os
 import numpy as np
-import rdwork
+import rdworks
 
-from rdwork import MolLibr
+from rdworks import MolLibr
 from collections.abc import Callable
 from aimnet2calc import AIMNet2Calculator
+
+workdir = os.path.dirname(__file__)
 
 #CODATA 2018 energy conversion factor
 hartree2ev = 27.211386245988
@@ -152,10 +154,9 @@ def padding_numbers(lists, pad_value=0):
     return np.array(lists_padded)
 
 
-def test_rdwork():
+def test_rdworks():
     libr = MolLibr(torsion_dataset_smiles, torsion_dataset_names)
-    libr = libr.make_confs(n_rel=1.0, progress=True)
-    libr = libr.drop_confs(similar=True).rename()
+    libr = MolLibr([mol.make_confs(n=50, progress=True).drop_confs(similar=True) for mol in libr])
     batches = libr_to_batches(libr)
     print(libr.count(), "molecules")
     print("batches", batches)
@@ -180,7 +181,7 @@ def test_ase_optimize():
     import io
     from types import SimpleNamespace
 
-    libr = rdwork.read_sdf("./cyclooctane.sdf", confs=True)
+    libr = rdworks.read_sdf(os.path.join(workdir, "cyclooctane.sdf"), confs=True)
     mol = libr[0]
     conformer = mol.confs[0]
     ase_atoms = ase.Atoms(symbols = conformer.symbols(),
@@ -227,8 +228,8 @@ def test_ase_torsion():
 
     torsion_dataset_names = ["07", "09", "20", "39", "10", "23", "12", "29"]
 
-    libr = rdwork.MolLibr(torsion_dataset_smiles, torsion_dataset_names)
-    libr = libr.make_confs(n=50, progress=False)
+    libr = MolLibr(torsion_dataset_smiles, torsion_dataset_names)
+    libr = MolLibr([mol.make_confs(n=50, progress=False) for mol in libr])
 
     use_converged_only = True
     interval = 15.0
@@ -302,7 +303,7 @@ def test_ase_torsion():
 
 
 def test_batch_energies():
-    libr = rdwork.read_sdf("./cyclooctane.sdf", confs=True)
+    libr = rdworks.read_sdf(os.path.join(workdir, "cyclooctane.sdf"), confs=True)
     libr += libr.copy()
 
     batches = libr_to_batches(libr)
