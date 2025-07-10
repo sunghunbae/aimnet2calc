@@ -1,7 +1,9 @@
 import torch
 from torch import Tensor
 from typing import Optional, Tuple
-from torch_cluster import radius_graph
+
+# from torch_cluster import radius_graph
+
 import numba
 try:
     # optionaly use numba cuda
@@ -9,7 +11,30 @@ try:
     _numba_cuda_available = True
 except ImportError:
     _numba_cuda_available = False
+
 import numpy as np
+
+
+def radius_graph(pos, batch, r, max_num_neighbors=None):
+    """
+    Pure PyTorch implementation with batch support
+    """
+    # Calculate pairwise distances
+    distances = torch.cdist(pos, pos)
+    
+    # Create batch mask - only allow edges within same batch
+    batch_mask = batch.unsqueeze(1) == batch.unsqueeze(0)
+    
+    # Find edges within radius and same batch
+    radius_mask = (distances <= r) & (distances > 0)  # Exclude self-loops
+    valid_edges = radius_mask & batch_mask
+    
+    edge_index = valid_edges.nonzero().t()
+    
+    if max_num_neighbors and edge_index.size(1) > max_num_neighbors:
+        edge_index = edge_index[:, :max_num_neighbors]
+    
+    return edge_index
 
 
 @numba.njit(cache=True)
